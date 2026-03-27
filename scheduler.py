@@ -59,15 +59,23 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Manage story scout scheduling")
     parser.add_argument(
         "action",
+        nargs="?",
         choices=["install", "uninstall", "run"],
         help="install/uninstall cron job, or run the scout now",
     )
+    parser.add_argument(
+        "--now",
+        action="store_true",
+        help="run the scout immediately (alias for 'run')",
+    )
     args = parser.parse_args()
 
-    if args.action == "install":
+    if args.now or args.action == "run":
+        from scout import main
+        main()
+    elif args.action == "install":
         install_cron()
     elif args.action == "uninstall":
         uninstall_cron()
-    elif args.action == "run":
-        from scout import main
-        main()
+    else:
+        parser.print_help()
